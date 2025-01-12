@@ -1,4 +1,4 @@
-# Face Analysis
+# Blink monitoring app
 
 This project is a real-time face analysis system that uses a webcam to detect eye blinking and saves it periodically into local db.
 
@@ -92,3 +92,9 @@ If you encounter issues:
 - Ensure the `shape_predictor_68_face_landmarks.dat` file is in the correct directory
 - Verify that your webcam is working correctly
 - Check the logs in `runtime.log` for errors
+
+## Taking the application live (cloud setup)
+- Connect this github with some CI/CD (Github Actions or something), to initiate auto deploy.
+- Push the code to remote servers to build the installable for differnt OS and CPU supported environments
+- Upload the build on S3 or Azure storage service on a public path to be downloadable and execuable by users
+- Probailiy add login step to save user/system specific details.
