@@ -68,9 +68,8 @@ class FrameHandler:
                 if key == ord('q') or self.running is False:
                     break
         except Exception as err:
-            raise err
+            log.error(f"Failed in monitoring blinks : {str(err)}")
         finally:
-            # self.running = False
-            # self.capture.release()
-            # cv2.destroyAllWindows()
-            pass
+            self.running = False
+            self.capture.release()
+            cv2.destroyAllWindows()

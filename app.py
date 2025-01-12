@@ -19,11 +19,6 @@ try:
     frame_handler = FrameHandler()
     frame_handler.monitor_blinks()
 except Exception as err:
-    raise err
+    log.error(f"Failed in main app : {str(err)}")
 finally:
-    # self.running = False
-    # self.capture.release()
-    # cv2.destroyAllWindows()
-    pass
-# finally:
-#     sys.exit(0)
+    sys.exit(0)
