@@ -6,13 +6,12 @@ from blink_app.config import FRAME_WIDTH, FRAME_HEIGHT, FPS
 from blink_app.logging import log
 from blink_app.face_analyzer import FaceAnalyzer
 from blink_app.database import DBHandler
-from blink_app.shared_vars import METRICS
-from blink_app.utils import find_working_camera, setup_signal_handler
+from blink_app.utils import setup_signal_handler
 from collections import deque
 
 class FrameHandler:
 
-    def __init__(self, frame_rate=30, camera_index=find_working_camera()):
+    def __init__(self, frame_rate=30, camera_index=0):
         self.camera_index = camera_index
         self.frame_rate = frame_rate
         self.running = False
@@ -61,9 +60,6 @@ class FrameHandler:
                     self.total_blinks += blinks
                     self.db.log_metrics(blinks, avg_cpu_val, memory_usage_val)
                     log.info("in last second -> blinks : %s, avg cpu (per) : %s, memory (per) : %s", str(blinks), str(avg_cpu_val), str(memory_usage_val))
-                    METRICS["blinks"] = blinks
-                    METRICS["cpu"] = avg_cpu_val
-                    METRICS["mem"] = memory_usage_val
                     frame_count = 0
 
                 # Display the frame
@@ -71,8 +67,10 @@ class FrameHandler:
                 key = cv2.waitKey(1) & 0xFF
                 if key == ord('q') or self.running is False:
                     break
-
+        except Exception as err:
+            raise err
         finally:
-            self.running = False
-            self.capture.release()
-            cv2.destroyAllWindows()
+            # self.running = False
+            # self.capture.release()
+            # cv2.destroyAllWindows()
+            pass
