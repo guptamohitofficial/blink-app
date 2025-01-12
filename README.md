@@ -87,12 +87,6 @@ If you are using a different camera, you can change the camera index in the `bli
 - **runtime.log**: A log file that records performance metrics and final statistics
 - **shape_predictor_68_face_landmarks.dat**: Pre-trained dlib model for facial landmarks detection (not included)
 
-## License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-## Contributing
-Contributions are welcome! Please fork the repository and submit a pull request for any improvements or additional features.
-
 ## Troubleshooting
 If you encounter issues:
 - Ensure the `shape_predictor_68_face_landmarks.dat` file is in the correct directory
