@@ -5,6 +5,7 @@ import numpy as np
 from blink_app.config import FRAME_WIDTH, FRAME_HEIGHT, FPS
 from blink_app.logging import log
 from blink_app.face_analyzer import FaceAnalyzer
+# from blink_app.no_cv_face_analyzer import FaceAnalyzer
 from blink_app.database import DBHandler
 from blink_app.utils import setup_signal_handler
 from collections import deque
@@ -59,7 +60,9 @@ class FrameHandler:
                     blinks = analyzer.get_and_reset_blink_count()
                     self.total_blinks += blinks
                     self.db.log_metrics(blinks, avg_cpu_val, memory_usage_val)
-                    log.info("in last second -> blinks : %s, avg cpu (per) : %s, memory (per) : %s", str(blinks), str(avg_cpu_val), str(memory_usage_val))
+                    # log.info("in last second -> blinks : %s, avg cpu (per) : %s, memory (per) : %s", str(blinks), str(avg_cpu_val), str(memory_usage_val))
+                    # log.info("no cv blinks : %s - %s", str(blinks), str(self.total_blinks))
+                    log.info("blinks : %s - %s", str(blinks), str(self.total_blinks))
                     frame_count = 0
 
                 # Display the frame

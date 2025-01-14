@@ -1,4 +1,4 @@
-import cv2
+
 import dlib
 import numpy as np
 import logging
@@ -17,38 +17,22 @@ class FaceAnalyzer:
         self.EYE_AR_CONSEC_FRAMES = 3
         self.BLINK_COOLDOWN = 10  # frames to wait before detecting next blink
         
-        # Constants for frown detection
-        self.MOUTH_AR_THRESH = 0.2
-        
         # Performance monitoring
         self.frame_times = deque(maxlen=30)
         self.blink_counter = 0
         self.frame_counter = 0
-        self.frown_counter = 0
         
         # State tracking
         self.blink_cooldown_counter = 0
         self.is_eye_closed = False
-        self.is_frowning = False
-        self.distance_alert_cooldown = 0
-        self.distance_alert_counter = 0
         
         # Initialize metrics with default values to prevent empty sequence errors
         self.metrics = {
-            'cpu_usage': [0.0],
-            'memory_usage': [0.0],
-            'fps': [0.0],
-            'latency': [0.0],
-            'distance': 0.0,
-            'screen_distance_alert': False
+            'latency': [0.0]
         }
         
         # Start time
         self.start_time = time.time()
-        
-        # Warning settings
-        self.warning_timestamp = 0
-        self.WARNING_DURATION = 2  # seconds
 
     def process_frame(self, frame):
         """Process a single frame and return analyzed metrics"""
@@ -56,20 +40,17 @@ class FaceAnalyzer:
             return frame, self.metrics
             
         frame_start = time.time()
-        # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        
+        # Assuming `frame` is already a grayscale (2D: height x width) numpy array
         gray = frame
-        # print("frame", frame)
-        # print("cv2.COLOR_BGR2GRAY", cv2.COLOR_BGR2GRAY)
-        # print("gray", gray)
         
         # Detect faces
         faces = self.detector(gray)
-        # print("faces", faces)
+        
         # Process each face (assuming single face for now)
         for face in faces:
             # Get facial landmarks
             landmarks = self.predictor(gray, face)
-            # print("landmarks", landmarks)
             points = np.array([[p.x, p.y] for p in landmarks.parts()])
             
             # Extract eye coordinates
@@ -91,22 +72,6 @@ class FaceAnalyzer:
             
             if self.blink_cooldown_counter > 0:
                 self.blink_cooldown_counter -= 1
-            
-            # Draw facial landmarks
-            for point in points:
-                cv2.circle(frame, tuple(point), 1, (0, 255, 0), -1)
-            
-            # Draw eye contours
-            cv2.polylines(frame, [left_eye], True, (0, 255, 0), 1)
-            cv2.polylines(frame, [right_eye], True, (0, 255, 0), 1)
-            
-            # Calculate distance (adjusted calibration)
-            face_width = face.right() - face.left()
-            self.metrics['screen_distance_alert'] = self.metrics['distance'] < 40  # Alert if closer than 40cm
-            
-            # Draw face rectangle
-            x1, y1, x2, y2 = face.left(), face.top(), face.right(), face.bottom()
-            cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
         # Update performance metrics
         self.metrics['latency'].append((time.time() - frame_start) * 1000)  # Convert to ms
@@ -125,7 +90,7 @@ class FaceAnalyzer:
         return ear
 
     def get_and_reset_blink_count(self):
-        '''Will be called periodically to return blink count in that period and reset to 0'''
+        """Will be called periodically to return blink count in that period and reset to 0"""
         blinks = self.blink_counter
         self.blink_counter = 0
         return blinks

@@ -15,7 +15,10 @@ This project is a real-time face analysis system that uses a webcam to detect ey
 - **Automatic Camera Selection**:
   - If you want to override the automatic selection, you can modify the `find_working_camera()` function in `utils.py`
 - **Build Using Pyinstaller**:
-  - Run `pyinstaller --onefile app.py --add-binary /<path_to_project_folder>/shape_predictor_68_face_landmarks.dat:.`
+  - Run `pyinstaller --onefile app.py --add-data /Users/mohitgupta/Desktop/work/projects/blink-app/shape_predictor_68_face_landmarks.dat:. --add-binary /<path_to_project_folder>/shape_predictor_68_face_landmarks.dat:.`
+  
+  
+  pyinstaller --onefile app.py --add-binary /<path_to_project_folder>/shape_predictor_68_face_landmarks.dat:.
 
 ## Code Structure Improvements
 - Reorganized into modular components
