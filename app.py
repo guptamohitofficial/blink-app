@@ -13,25 +13,34 @@ def run_server():
         server_thread.join()
         sys.exit(0)
 
-def get_process_cpu_usage():
-    process = psutil.Process(os.getpid())
-    cpu_percent = process.cpu_percent(interval=1)
-    return cpu_percent
+# def get_process_cpu_usage():
+#     process = psutil.Process(os.getpid())
+#     cpu_percent = process.cpu_percent(interval=1)
+#     return cpu_percent
 try:
-    def get_threads_cpu_percent(p, interval=0.1):
-        total_percent = p.cpu_percent(interval)
-        total_time = sum(p.cpu_times())
-        return [total_percent * ((t.system_time + t.user_time)/total_time) for t in p.threads()]
+#     def get_threads_cpu_percent(p, interval=0.1):
+#         total_percent = p.cpu_percent(interval)
+#         total_time = sum(p.cpu_times())
+#         return [total_percent * ((t.system_time + t.user_time)/total_time) for t in p.threads()]
     server_thread = threading.Thread(target=run_server, name="server_thread")
     server_thread.daemon=True
     server_thread.start()
-    cpu_usage = get_process_cpu_usage()
-    print(f"Total Process CPU Usage: {cpu_usage}%")
+    # cpu_usage = get_process_cpu_usage()
+    # print(f"Total Process CPU Usage: {cpu_usage}%")
 
-
+    # run_server()
 
     frame_handler = FrameHandler()
     frame_handler.monitor_blinks()
+    # import psutil
+
+    # proc = psutil.Process(os.getpid())
+    # proc.cpu_percent(interval=0.1) 
+    # while True:
+    #     cpu_usage = proc.cpu_percent(interval=None)
+    #     print(cpu_usage)
+    #     # time.sleep(0.01)
+
 except Exception as err:
     log.error(f"Failed in main app : {str(err)}")
 

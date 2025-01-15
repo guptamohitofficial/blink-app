@@ -14,7 +14,6 @@ class FaceAnalyzer:
         
         # Constants for blink detection
         self.EYE_AR_THRESH = 0.25
-        self.EYE_AR_CONSEC_FRAMES = 3
         self.BLINK_COOLDOWN = 10  # frames to wait before detecting next blink
         
         # Performance monitoring
@@ -25,44 +24,25 @@ class FaceAnalyzer:
         # State tracking
         self.blink_cooldown_counter = 0
         self.is_eye_closed = False
-        
-        # Initialize metrics with default values to prevent empty sequence errors
-        self.metrics = {
-            'latency': [0.0]
-        }
-        
-        # Start time
-        self.start_time = time.time()
 
     def process_frame(self, frame):
         """Process a single frame and return analyzed metrics"""
         if frame is None:
-            return frame, self.metrics
+            return frame
             
-        frame_start = time.time()
+        faces = self.detector(frame)
         
-        # Assuming `frame` is already a grayscale (2D: height x width) numpy array
-        gray = frame
-        
-        # Detect faces
-        faces = self.detector(gray)
-        
-        # Process each face (assuming single face for now)
         for face in faces:
-            # Get facial landmarks
-            landmarks = self.predictor(gray, face)
+            landmarks = self.predictor(frame, face)
             points = np.array([[p.x, p.y] for p in landmarks.parts()])
             
-            # Extract eye coordinates
             left_eye = points[42:48]
             right_eye = points[36:42]
             
-            # Calculate eye aspect ratios
             left_ear = self.calculate_eye_aspect_ratio(left_eye)
             right_ear = self.calculate_eye_aspect_ratio(right_eye)
             ear = (left_ear + right_ear) / 2.0
             
-            # Blink detection with cooldown
             if ear < self.EYE_AR_THRESH and not self.is_eye_closed and self.blink_cooldown_counter == 0:
                 self.is_eye_closed = True
                 self.blink_counter += 1
@@ -73,8 +53,6 @@ class FaceAnalyzer:
             if self.blink_cooldown_counter > 0:
                 self.blink_cooldown_counter -= 1
 
-        # Update performance metrics
-        self.metrics['latency'].append((time.time() - frame_start) * 1000)  # Convert to ms
         
         return frame
 
