@@ -32,17 +32,6 @@ class FaceAnalyzer:
         self.is_frowning = False
         self.distance_alert_cooldown = 0
         self.distance_alert_counter = 0
-        
-        # Initialize metrics with default values to prevent empty sequence errors
-        self.metrics = {
-            'cpu_usage': [0.0],
-            'memory_usage': [0.0],
-            'fps': [0.0],
-            'latency': [0.0],
-            'distance': 0.0,
-            'screen_distance_alert': False
-        }
-        
         # Start time
         self.start_time = time.time()
         
@@ -53,22 +42,22 @@ class FaceAnalyzer:
     def process_frame(self, frame):
         """Process a single frame and return analyzed metrics"""
         if frame is None:
-            return frame, self.metrics
+            return frame
             
         frame_start = time.time()
         # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        gray = frame
+        # gray = frame
         # print("frame", frame)
         # print("cv2.COLOR_BGR2GRAY", cv2.COLOR_BGR2GRAY)
         # print("gray", gray)
         
         # Detect faces
-        faces = self.detector(gray)
+        faces = self.detector(frame)
         # print("faces", faces)
         # Process each face (assuming single face for now)
         for face in faces:
             # Get facial landmarks
-            landmarks = self.predictor(gray, face)
+            landmarks = self.predictor(frame, face)
             # print("landmarks", landmarks)
             points = np.array([[p.x, p.y] for p in landmarks.parts()])
             
@@ -101,15 +90,13 @@ class FaceAnalyzer:
             cv2.polylines(frame, [right_eye], True, (0, 255, 0), 1)
             
             # Calculate distance (adjusted calibration)
-            face_width = face.right() - face.left()
-            self.metrics['screen_distance_alert'] = self.metrics['distance'] < 40  # Alert if closer than 40cm
             
             # Draw face rectangle
             x1, y1, x2, y2 = face.left(), face.top(), face.right(), face.bottom()
             cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
         # Update performance metrics
-        self.metrics['latency'].append((time.time() - frame_start) * 1000)  # Convert to ms
+        # self.metrics['latency'].append((time.time() - frame_start) * 1000)  # Convert to ms
         
         return frame
 
